@@ -40,5 +40,5 @@ jobs:
             title: "Merge *" + from + "* into *" + into + "*",
             body: "If this is not needed, feel free to close it."
             head: "merge-upstream/" + process.env.GITHUB_RUN_ID,
-            base: into
-         })
+            base: into,
+          })
