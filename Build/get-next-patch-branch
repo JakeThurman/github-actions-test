@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 current=$(git branch --show-current | cut -d'_' -f 1)
 major=$(echo "$current" | cut -d'.' -f 1)
