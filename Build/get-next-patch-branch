@@ -1,0 +1,24 @@
+#!/bin/sh
+
+current=$(git branch --show-current | cut -d'_' -f 1)
+major=$(echo "$current" | cut -d'.' -f 1)
+minor=$(echo "$current" | cut -d'.' -f 2)
+patch=$(echo "$current" | cut -d'.' -f 3)
+
+possible_next_branches=( \
+    "$major.$minor.$(expr $patch + 1)_patch" \
+    "$major.$(expr $minor + 1).0_patch" \
+    "$(expr $major + 1).0.0_patch" \
+    "main" \
+)
+
+for (( i=0; i<${#possible_next_branches[@]}; i++ )) do
+    # check if this branch actually exists
+    if [ ! -z "$(git show-ref origin/${possible_next_branches[$i]})" ]; then
+        break
+    fi
+done
+
+next=${possible_next_branches[$i]}
+
+echo "$next"
