@@ -3,7 +3,7 @@ name: Merge Upstream
 on:
   push:
     branches:
-      - *_patch
+      - "*_patch"
 
 jobs:
   merge-upstream:
