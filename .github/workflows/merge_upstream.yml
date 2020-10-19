@@ -28,8 +28,8 @@ jobs:
       with:
         script: |
           const fs = require('fs')
-          const into = fs.readFileSync(process.env.GITHUB_WORKSPACE + "/merge_into.tmp")
-          const from = fs.readFileSync(process.env.GITHUB_WORKSPACE + "/merge_from.tmp")
+          const into = fs.readFileSync(process.env.GITHUB_WORKSPACE + "/merge_into.tmp", 'utf8').trim()
+          const from = fs.readFileSync(process.env.GITHUB_WORKSPACE + "/merge_from.tmp", 'utf8').trim()
 
           await github.pulls.create({
             owner: context.repo.owner,
