@@ -20,8 +20,8 @@ jobs:
         bash ./Build/get-next-patch-branch > merge_into.tmp
         git branch --show-current > merge_from.tmp
         git checkout origin/$(cat merge_from.tmp)
-        git merge %GITHUB_SHA% --no-edit
-        git push -u origin merge-upstream/%GITHUB_RUN_ID%
+        git merge $GITHUB_SHA --no-edit
+        git push -u origin merge-upstream/$GITHUB_RUN_ID
 
     - uses: actions/github-script@v3
       with:
