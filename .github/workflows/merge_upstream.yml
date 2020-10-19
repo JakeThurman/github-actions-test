@@ -1,0 +1,44 @@
+name: Merge Upstream
+
+on:
+  push:
+    branches:
+      - *_patch
+
+jobs:
+  merge-upstream:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout Commit
+      uses: actions/checkout@v2
+      with:
+        # Load all history & tags
+        fetch-depth: 0
+
+    - name: Find next patch branch
+      run: "./Build/get-next-patch-branch > merge_into.tmp && git branch --show-current > merge_from.tmp"
+
+    - name: Checkout next patch branch
+      run: "git checkout origin/$(cat merge_from.tmp) && git checkout -b merge-upstream/%GITHUB_RUN_ID%"
+
+    - name: Merge from downstream patch branch
+      run: "git merge %GITHUB_SHA% --no-edit"
+
+    - name: Push branch
+      run: "git push -u origin merge-upstream/%GITHUB_RUN_ID%"
+
+    - uses: actions/github-script@v3
+      with:
+        script: |
+          const fs = require('fs')
+          const into = fs.readFileSync(process.env.GITHUB_WORKSPACE + "/merge_into.tmp")
+          const from = fs.readFileSync(process.env.GITHUB_WORKSPACE + "/merge_from.tmp")
+
+          await github.pulls.create({
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            title: "Merge *" + from + "* into *" + into + "*",
+            body: "If this is not needed, feel free to close it."
+            head: 'merge-upstream/' + process.env.GITHUB_RUN_ID,
+            base: into,
+         })
