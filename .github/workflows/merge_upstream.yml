@@ -15,17 +15,13 @@ jobs:
         # Load all history & tags
         fetch-depth: 0
 
-    - name: Find next patch branch
-      run: "./Build/get-next-patch-branch > merge_into.tmp && git branch --show-current > merge_from.tmp"
-
-    - name: Checkout next patch branch
-      run: "git checkout origin/$(cat merge_from.tmp) && git checkout -b merge-upstream/%GITHUB_RUN_ID%"
-
-    - name: Merge from downstream patch branch
-      run: "git merge %GITHUB_SHA% --no-edit"
-
-    - name: Push branch
-      run: "git push -u origin merge-upstream/%GITHUB_RUN_ID%"
+    - name: Merge next patch branch
+      run: |
+        sh ./Build/get-next-patch-branch > merge_into.tmp
+        git branch --show-current > merge_from.tmp
+        git checkout origin/$(cat merge_from.tmp)
+        git merge %GITHUB_SHA% --no-edit
+        git push -u origin merge-upstream/%GITHUB_RUN_ID%
 
     - uses: actions/github-script@v3
       with:
